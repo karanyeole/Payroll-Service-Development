@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Requests</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to bottom right, #003366, #000033);
+            background-size: cover;
+            color: #FFFFFF;
+        }
+        .container {
+            margin: 0 auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            max-width: 1000px;
+            width: 100%;
+        }
+        h2 {
+            text-align: center;
+            color: #FFFFFF;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .action-buttons form {
+            display: inline-block;
+        }
+        button {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Leave Requests</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for leave in leave_requests %}
+                    <tr>
+                        <td>{{ leave.employee.name }}</td>
+                        <td>{{ leave.start_date }}</td>
+                        <td>{{ leave.end_date }}</td>
+                        <td>{{ leave.reason }}</td>
+                        <td>{{ leave.status }}</td>
+                        <td>
+                            {% if leave.status == 'pending' %}
+                                <div class="action-buttons">
+                                    <form method="post" action="{% url 'manage_leave_request' leave.id 'approve' %}">
+                                        {% csrf_token %}
+                                        <button type="submit">Approve</button>
+                                    </form>
+                                    <form method="post" action="{% url 'manage_leave_request' leave.id 'reject' %}">
+                                        {% csrf_token %}
+                                        <button type="submit">Reject</button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+    </div>
+</body>
+</html>
